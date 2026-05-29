@@ -1,4 +1,4 @@
-package com.example.todo.todo_app;
+package com.example.todo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class TodoAppApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(TodoAppApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(TodoAppApplication.class, args);
+    }
 }
