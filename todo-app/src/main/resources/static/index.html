@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My SpringBoot</title>
+</head>
+<body>
+    <h1>To-Do List</h1>
+    <div>
+        <input type="text" id="todoTitle" placeholder="Enter a new task title">
+        <button onclick="addTask()">Add Task</button>
+    </div>
+
+    <h2>Current Task</h2>
+    <ul id="todoListContainer"></ul>
+</body>
+
+<script>
+    const API_URL = 'http://localhost:8080/api/todos';
+
+        // 1. READ ACTION: Fetch existing tasks when page opens
+        async function loadTasks() {
+            try {
+                const response = await fetch(API_URL);
+                const todos = await response.json();
+                
+                const container = document.getElementById('todoListContainer');
+                container.innerHTML = ''; // Clear container
+
+                // Loop through the JSON array list and turn them into visual HTML bullets
+                todos.forEach(todo => {
+                    const li = document.createElement('li');
+                    li.textContent = `[ID: ${todo.id}] ${todo.title} — Completed: ${todo.completed}`;
+                    container.appendChild(li);
+                });
+            } catch (error) {
+                console.error("Error pulling tasks:", error);
+            }
+        }
+
+        // 2. CREATE ACTION: Capture input text and hit our POST API
+        async function addTask() {
+            const inputField = document.getElementById('todoTitle');
+            const titleText = inputField.value;
+
+            if (!titleText.trim()) {
+                alert("Please type a title first!");
+                return;
+            }
+
+            // Construct our JSON payload string matching our Todo.java Model entity
+            const payload = {
+                title: titleText,
+                completed: false
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload) // Jackson ObjectMapper deserializes this on the server side!
+                });
+
+                if (response.ok) {
+                    inputField.value = ''; // Reset input text box
+                    loadTasks();           // Reload visual task list to show the new addition
+                }
+            } catch (error) {
+                console.error("Error creating task:", error);
+            }
+        }
+
+        // Run this function immediately upon web page initialization
+        loadTasks();
+</script>
+
+</html>
